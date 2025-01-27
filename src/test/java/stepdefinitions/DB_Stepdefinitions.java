@@ -1,5 +1,6 @@
 package stepdefinitions;
 
+import com.mysql.cj.protocol.Resultset;
 import helperDB.CommonData;
 import io.cucumber.java.en.Given;
 import manage.Manage;
@@ -120,6 +121,12 @@ public class DB_Stepdefinitions extends Manage {
 
     @Given("retrieve the inserted record's ID")
     public void retrieve_the_inserted_record_s_id() throws SQLException {
+        ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+        if (generatedKeys.next()) {
+            insertedId = generatedKeys.getInt(1); // Eklenen kaydın ID'sini al
+        }
+        System.out.println("Inserted Id kaydedildi"+ insertedId);
+
     }
 
 
@@ -130,23 +137,67 @@ public class DB_Stepdefinitions extends Manage {
 
     @Given("Verify the data information Result is obtained.")
     public void verify_the_data_information_result_is_obtained() {
-
+        int rowCount=0;
+        try {
+            rowCount= preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        assertEquals(1,rowCount);
     }
 
     @Given("Insert a new record into the transport_route table")
     public void insert_a_new_record_into_the_transport_route_table() throws SQLException {
-
+    query=getUS09_inserted_transportRoute();
+    preparedStatement=getPraperedStatementGeneratedKeys(query,true);
+    /**  Table: transport_route
+     Columns:
+     route_title varchar(100)
+     no_of_vehicle int(11)
+     note text
+     is_active varchar(255)
+     created_at timestamp
+     updated_at date   */
+    preparedStatement.setString(1,"Ennenda");
+    preparedStatement.setInt(2,faker.number().numberBetween(1,5));
+    preparedStatement.setString(3,faker.lorem().word());
+    preparedStatement.setString(4,"Active");
+    preparedStatement.setTimestamp(5,new Timestamp(System.currentTimeMillis()));
+    preparedStatement.setDate(6,Date.valueOf("2025-01-27"));
 
     }
 
     @Given("Insert a new record into the visitors_book table")
     public void insert_a_new_record_into_the_visitors_book_table() throws SQLException {
+        query=getUS10_insertedVisitorsBook();
+        preparedStatement=getPraperedStatementGeneratedKeys(query,true);
+        //parametreler hazırlanır
+        preparedStatement.setInt(1,105);//staff id
+        preparedStatement.setInt(2,201);//student session id
+        preparedStatement.setString(3,"Online");//source
+        preparedStatement.setString(4,"Admission");//purpose
+        preparedStatement.setString(5,"John Doe");//name
+        preparedStatement.setString(6,"j.doe@hotmail.com");//email
+        preparedStatement.setString(7,"67543212345");//contact
+        preparedStatement.setString(8,"Auswise");//ıdprofil
+        preparedStatement.setInt(9,3);
+        preparedStatement.setDate(10,Date.valueOf("2025-01-27"));
+        preparedStatement.setString(11,"09.00");
+        preparedStatement.setString(12,"17.00");
+        preparedStatement.setString(13,"Meeting");
+        preparedStatement.setString(14,"image.jpg");
+        preparedStatement.setString(15,"Herr BAKIR");
+        preparedStatement.setTimestamp(16,new Timestamp(System.currentTimeMillis()));
+
+
 
     }
 
     @Given("Delete the record from the visitors_book table using the retrieved ID")
     public void delete_the_record_from_the_visitors_book_table_using_the_retrieved_id() throws SQLException {
-
+    query=getUS10_deletedVisitorsBook();
+    preparedStatement=getPraperedStatement(query);
+    preparedStatement.setInt(1,insertedId);
     }
 
     @Given("Update fine_amount to '200.00' for records where month is 'October'")

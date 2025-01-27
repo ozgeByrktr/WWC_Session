@@ -9,6 +9,7 @@ import java.util.*;
 public class CommonData {
     public static List<Integer> sectionId;
     public static List<Integer> expectedSectionId=new ArrayList<Integer>(Arrays.asList(1,5));
+    public static int insertedId;
 
 
     public CommonData() {

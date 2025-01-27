@@ -21,12 +21,12 @@ Feature: DB Testing
     * Query results lists the firstname and lastname are validated.
     * Database connection is closed
 
-
+@US09
   Scenario: Insert transport_route
     * Insert a new record into the transport_route table
     * Verify the data information Result is obtained.
     * retrieve the inserted record's ID
-
+  @US10
   Scenario: Insert and delete a record from visitors_book table
     * Insert a new record into the visitors_book table
     * Verify the data information Result is obtained.
