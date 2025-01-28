@@ -12,7 +12,7 @@ Feature: DB Testing
     * Database connection is closed
 
 
-
+@US04
 
   # List the firstname and lastname
   # of students in the students table with admission numbers between 18001 and 18010.
@@ -44,4 +44,9 @@ Feature: DB Testing
   Scenario: Get email addresses where firstname contains 'al'
     * query prepared for email addresses where firstname contains 'al'
     * should be see the list of email addresses with 'al' in the firstname
+    * Database connection is closed
+    @US29
+  Scenario: inserted bulk data from subjects table
+    * insert 5 random subjects into the database
+    * 5 Enter the data in bulk.Check that is added to the table
     * Database connection is closed

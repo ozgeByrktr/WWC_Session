@@ -2,6 +2,7 @@ package stepdefinitions;
 
 import com.mysql.cj.protocol.Resultset;
 import helperDB.CommonData;
+import helperDB.subjects;
 import io.cucumber.java.en.Given;
 import manage.Manage;
 
@@ -11,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static helperDB.CommonData.*;
@@ -75,11 +77,21 @@ public class DB_Stepdefinitions extends Manage {
 
     @Given("Query is prepared  in the students table with admission numbers")
     public void query_is_prepared_in_the_students_table_with_admission_numbers() throws SQLException {
-
+        query=getUS04_studentsTableAdmissionNo();
+        resultSet=getStatement().executeQuery(query);
     }
 
     @Given("Query results lists the firstname and lastname are validated.")
     public void query_results_lists_the_firstname_and_lastname_are_validated() throws SQLException {
+        studentLast_FirstName=new HashMap<>();
+        while (resultSet.next()){
+            studentLast_FirstName.put(resultSet.getString("lastname"),resultSet.getString("firstname"));
+        }
+        for (String lastname : data.getExpstudentLast_FirstName().keySet()){
+            String expFirstName=data.getExpstudentLast_FirstName().get(lastname);
+            String actualFirstName=studentLast_FirstName.get(lastname);
+            assertEquals("Firstname does not match for lastname "+lastname, expFirstName, actualFirstName);
+        }
 
     }
 
@@ -229,5 +241,18 @@ public class DB_Stepdefinitions extends Manage {
 
 
     }
+    @Given("insert {int} random subjects into the database")
+    public void insert_random_subjects_into_the_database(Integer count) {
+        subjects subjectService= new subjects();
+        List<Map<String,Object>> subjects=subjectService.generateFakeSubjects(count);
+        subjectService.insertSubjects(connection,subjects);
+    }
+    @Given("{int} Enter the data in bulk.Check that is added to the table")
+    public void enter_the_data_in_bulk_check_that_is_added_to_the_table(int rowCount) {
+        System.out.println(bulkResult.length+"record is successfully added to the table");
+        assertEquals(rowCount,bulkResult.length);
+
+    }
+
 }
 
